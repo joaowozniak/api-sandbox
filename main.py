@@ -16,7 +16,6 @@ sandbox = FastAPI()
 
 basic_auth = BasicAuth()
 
-
 def check_username_format(username: str):
     if username.startswith("user_"):        
         return username
@@ -53,8 +52,6 @@ def welcome(current_user: str = Depends(get_current_user)):
 @sandbox.get("/accounts")
 def get_accounts(current_user: str = Depends(get_current_user)): 
     account = from_token(current_user)
-    return {
-        "currency":account.currency, 
-        "institution":account.institution.id}
+    return account
 
 

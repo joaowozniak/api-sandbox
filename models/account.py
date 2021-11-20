@@ -7,10 +7,10 @@ class Account(BaseModel):
     currency: str
     enrollment_id: str
     account_id: str
-    account_number: Optional[str] = None
+    account_number: str
     institution: Institution
     last_four: str
-    #links: Account_Link
+    links: Account_Link
     name: str
     subtype: str
     type: str

@@ -11,10 +11,7 @@ class BasicAuth (SecurityBase):
 
     def __call__(self, request: Request) -> Optional[str]:
         authorized: str = request.headers.get("Authorization")        
-        scheme, param = get_authorization_scheme_param(authorized)
-        print(authorized)
-        print(param)
-        print(scheme)
+        scheme, param = get_authorization_scheme_param(authorized)        
         if not authorized or scheme.lower() != "basic":
             raise HTTPException(
                 status_code=401, 
