@@ -1,9 +1,10 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
 from fastapi.security.base import SecurityBase
 from fastapi.security.utils import get_authorization_scheme_param
 
 from starlette.requests import Request
 from typing import Optional
+import secrets, base64
 
 class BasicAuth (SecurityBase):
     def __init__(self, scheme_name: str = None):
@@ -21,3 +22,14 @@ class BasicAuth (SecurityBase):
 
         token = "test_" + param     
         return token
+
+def check_username_format(username: str) -> (str, int):
+    if username.startswith("user_multiple_"): 
+        print("aqui")
+        return (username, 1)
+    
+    elif username.startswith("user_"):      
+        return (username, 0)      
+        
+    else:
+        return ("_"+username, 0)
