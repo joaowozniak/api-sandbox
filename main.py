@@ -10,7 +10,7 @@ from starlette.responses import RedirectResponse
 from typing import Optional, List
 from auth.basicAuth import BasicAuth, check_username_format
 
-from contexts.accounts import *
+from controllers.accounts import *
 
 sandbox = FastAPI()
 
@@ -20,7 +20,7 @@ def get_current_user(token: str = Depends(basic_auth)) -> (str, int):
     decoded = base64.b64decode(token[5:]).decode("ascii")
     username, _, password = decoded.partition(":")
     flag = check_username_format(username)[1]
-    print(flag)
+    
     correct_username = secrets.compare_digest(username, check_username_format(username)[0])
     correct_password = secrets.compare_digest(password, "")
 
@@ -46,9 +46,19 @@ def welcome(current_user: (str, int) = Depends(get_current_user)):
 @sandbox.get("/accounts")
 def get_accounts(current_user: (str, int) = Depends(get_current_user)): 
     accounts = generate_accounts(current_user[0], current_user[1])
+    object_dict = {x.account_id: x for x in accounts}
+    print(object_dict)
     return accounts
 
+
 @sandbox.get("/accounts/{idx}")
+def get_accounts_by_id(current_user: (str, int) = Depends(get_current_user), idx: str = None): 
+    accounts = generate_accounts(current_user[0], current_user[1])
+    acc = get_account_by_id(accounts, idx)
+    return acc
+
+
+@sandbox.get("/accounts/{idx}/details")
 def get_accounts_by_id(current_user: (str, int) = Depends(get_current_user), idx: str = None): 
     accounts = generate_accounts(current_user[0], current_user[1])
     acc = get_account_by_id(accounts, idx)

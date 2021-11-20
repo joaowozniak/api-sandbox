@@ -25,7 +25,7 @@ class BasicAuth (SecurityBase):
 
 def check_username_format(username: str) -> (str, int):
     if username.startswith("user_multiple_"): 
-        print("aqui")
+        
         return (username, 1)
     
     elif username.startswith("user_"):      

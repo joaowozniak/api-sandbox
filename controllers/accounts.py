@@ -1,13 +1,16 @@
-from models.account import Account, get_all_account_names
+from models.account import Account
 from models.account_link import Account_Link, fill_links
-from models.institution import Institution, get_all_institutions
+from models.institution import Institution
 import hashlib
 from typing import List, Optional
+from controllers.institutions import *
+from controllers.routing_numbers import *
 
 base_link = "http://localhost:8000/accounts/"
 
 
 def from_token(token: str):
+    
     enrollment_id = "enr_" + str(hashlib.sha256(token.encode()).hexdigest())[-22:]
     id = "acc_" + str(hashlib.md5(token.encode()).hexdigest())[-22:]
     institutions = get_all_institutions()
@@ -17,6 +20,7 @@ def from_token(token: str):
     names = get_all_account_names()
     name = names[(abs(hash(str(hashlib.md5(token.encode()).hexdigest())))) % len(names)]
     links = fill_links(base_link, id)
+    rout_nums = get_routingnum_by_inst(institution.id)
     
     return Account(
         currency = "USD",
@@ -26,6 +30,7 @@ def from_token(token: str):
         account_number = acc_num,
         last_four = last_four,
         links = links,
+        routing_number = rout_nums,
         name = name,
         subtype = "checking",
         type = "depository"
@@ -39,6 +44,7 @@ def generate_accounts(token: str, flag: int) -> List[Account]:
         return [acc_one]
 
     elif flag == 1:
+        #CHANGE THIS!
         token = "asdijasdoijasojoxiajo"
         acc_two = from_token(token)
         
@@ -50,6 +56,13 @@ def get_account_by_id(accounts: List[Account], id: str) -> Account:
     for i in accounts:
         if id == i.account_id:
             return i 
+
+
+def get_all_account_names():
+    names = ["My Checking", "Jimmy Carter", "Ronald Reagan", "George H. W. Bush", "Bill Clinton", "George W. Bush", "Barack Obama", "Donald Trump"]
+    return names
+
+
 
         
 

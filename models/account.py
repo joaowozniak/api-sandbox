@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 from models.institution import Institution
 from models.account_link import Account_Link
+from models.routing_number import Routing_Number
 
 class Account(BaseModel):
     currency: str
@@ -11,13 +12,11 @@ class Account(BaseModel):
     institution: Institution
     last_four: str
     links: Account_Link
+    routing_number: Routing_Number
     name: str
     subtype: str
     type: str
 
-def get_all_account_names():
-    names = ["My Checking", "Jimmy Carter", "Ronald Reagan", "George H. W. Bush", "Bill Clinton", "George W. Bush", "Barack Obama", "Donald Trump"]
-    return names
 
 
     
