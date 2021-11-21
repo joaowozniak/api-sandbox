@@ -16,7 +16,5 @@ class Account(BaseModel):
     name: str
     subtype: str
     type: str
-
-
-
-    
+    available: float
+    ledger: float

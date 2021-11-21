@@ -13,6 +13,7 @@ def from_token(token: str):
     
     enrollment_id = "enr_" + str(hashlib.sha256(token.encode()).hexdigest())[-22:]
     id = "acc_" + str(hashlib.md5(token.encode()).hexdigest())[-22:]
+    acc_key = abs(hash(str(hashlib.md5(token.encode()).hexdigest())))
     institutions = get_all_institutions()
     institution = institutions[(abs(hash(str(hashlib.md5(token.encode()).hexdigest())))) % len(institutions)]
     acc_num = str(abs(hash(token)) % (10 ** 13))[-10:]    
@@ -21,6 +22,7 @@ def from_token(token: str):
     name = names[(abs(hash(str(hashlib.md5(token.encode()).hexdigest())))) % len(names)]
     links = fill_links(base_link, id)
     rout_nums = get_routingnum_by_inst(institution.id)
+    available_balance = ledger_balance = generate_available(acc_key)
     
     return Account(
         currency = "USD",
@@ -33,7 +35,9 @@ def from_token(token: str):
         routing_number = rout_nums,
         name = name,
         subtype = "checking",
-        type = "depository"
+        type = "depository",
+        available = available_balance,
+        ledger = ledger_balance
     )
 
 
@@ -62,6 +66,11 @@ def get_all_account_names():
     names = ["My Checking", "Jimmy Carter", "Ronald Reagan", "George H. W. Bush", "Bill Clinton", "George W. Bush", "Barack Obama", "Donald Trump"]
     return names
 
+
+def generate_available(account_id):
+    amounts = [i for i in range(10,10000)]
+    amount = amounts[abs(hash(account_id)) % len(amounts)]
+    return amount
 
 
         
