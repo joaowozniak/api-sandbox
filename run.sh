@@ -1,1 +1,1 @@
-uvicorn main:sandbox --reload
+uvicorn main:sandbox --reload --port 8000

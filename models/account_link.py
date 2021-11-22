@@ -7,11 +7,10 @@ class Account_Link(BaseModel):
     self: str
     transactions: str
 
-def fill_links(base_link: str, acc: str) -> Account_Link:
+    def show_details(self):
+        return {"account": self.self, "self": self.details}
 
-    return Account_Link(
-        balances = (base_link + acc + "/balances"),
-        details = (base_link + acc + "/details"),
-        self = (base_link + acc),
-        transactions = (base_link + acc + "/transactions")       
-    )        
+    def show_balances(self):
+        return {"account": self.self, "self": self.balances}        
+
+
