@@ -6,77 +6,81 @@ from models.description import Description
 from models.counterparty import Counterparty
 from models.transaction_link import Transaction_Link
 
+def fill_links(account_id: str, transaction_id: str) -> Transaction_Link:
 
-
-def fill_links(acc: str):
-
-    base_link = "http://localhost:8000/transactions/"
+    base_link = "http://localhost:8000/accounts/"
 
     return Transaction_Link(
-        account=(base_link + acc + "/account"), self=(base_link + acc)
+        account=(base_link + account_id), 
+        self=(base_link + account_id + "/transactions/" + transaction_id)
     )
 
-def generate_data_from_acc(acc: Account):
+def encode_with_alfanumeric(account_id: str, date: datetime.date) -> str:
+    encoded = str(hashlib.sha256((account_id + date.strftime("%Y/%m/%d")).encode()).hexdigest())[-22:]
+    
+    return encoded
+
+def generate_transactions(account: Account) -> List[Transaction]:
 
     day_delta = datetime.timedelta(days=1)
-
     start_date = datetime.date.today()
-    end_date = start_date - 5 * day_delta
+    end_date = start_date - 90 * day_delta
 
     transactions = []
 
-    acc_amount = acc.available
+    account_amount = account.available
+    account_id = account.account_id
 
-    for i in range((start_date - end_date).days + 1):
-        date = start_date - i * day_delta
+    for day in range((start_date - end_date).days + 1):
+        date = start_date - day * day_delta
+        
+        trans_id = encode_with_alfanumeric(account.account_id, date)
 
-        trans_id = str(
-            hashlib.sha256(
-                (acc.account_id + date.strftime("%Y/%m/%d")).encode()
-            ).hexdigest()
-        )[-22:]
-
-        merchs = get_all_merchants()
-        merch = merchs[abs(hash(trans_id)) % len(merchs)]
+        merchants = get_all_merchants()
+        merchant = merchants[abs(hash(trans_id)) % len(merchants)]
 
         categories = get_all_categories()
         category = categories[abs(hash(trans_id)) % len(categories)]
 
-        descr_counterparty = Counterparty(name=merch, type="organization")
+        description_counterparty = Counterparty(name=merchant, type="organization")
         trans_description = Description(
             category=category,
-            counterparty=descr_counterparty,
+            counterparty=description_counterparty,
             processing_status="complete",
         )
 
-        trans_links = fill_links(trans_id)
+        trans_links = fill_links(account_id, trans_id)
 
-        trans_amount = -generate_amount(trans_id)
-        trans_running_balance = acc_amount
-        acc_amount -= trans_amount
+        trans_amount = generate_amount(trans_id)        
 
         trans = Transaction(
-            account_id=acc.account_id,
+            account_id=account.account_id,
             amount=trans_amount,
             date=date.strftime("%Y/%m/%d"),
             description=trans_description,
             id=trans_id,
             links=trans_links,
-            running_balance=trans_running_balance,
+            running_balance=account_amount,
             status="posted",
             type="card_payment",
-            processing_status="ok",
+            processing_status="complete",
         )
 
+        account_amount = account_amount - trans_amount
         transactions.append(trans)
     return transactions
 
 
-def generate_amount(transaction_id: str) -> int:
-    amounts = [i for i in range(0, 100)]
-    amount = amounts[abs(hash(transaction_id)) % len(amounts)]
-    amount = -amount
-    return amount
+def generate_amount(transaction_id: str) -> float:    
+    amounts = [i for i in range(1, 100)]
+    amount = amounts[abs(hash(transaction_id[::-1])) % len(amounts)]
+    return amount*(-1.0)
+
+def get_transaction_by_id(transactions: List[Transaction], id: str) -> Transaction:
+    for trans in transactions:
+        if id == trans.id:
+            return trans 
+    return None
 
 
 def get_all_merchants():

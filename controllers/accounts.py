@@ -37,7 +37,7 @@ def pseudo_random_from_token(token: str, type: str) -> str:
         prandom = str(abs(hash(token)) % (10 ** 13))[-10:]
     return prandom
 
-def pseudo_random__starting_available(account_id: str) -> int:
+def pseudo_random_starting_available(account_id: str) -> int:
     amounts = [i for i in range(10, 10000)]
     amount = amounts[abs(hash(account_id)) % len(amounts)]
     return amount
@@ -72,10 +72,10 @@ def fill_data_from_token(token: str) -> Account:
 
     routing_number = get_routingnum_by_inst(institution.id)
 
-    acc_key = account_id[3:]
+    acc_key = account_id[4:]
 
-    available_balance = pseudo_random__starting_available(acc_key)
-    ledger_balance = pseudo_random__starting_available(acc_key)
+    available_balance = pseudo_random_starting_available(acc_key)
+    ledger_balance = pseudo_random_starting_available(acc_key)
 
     return Account(
         currency="USD",
@@ -94,14 +94,14 @@ def fill_data_from_token(token: str) -> Account:
     )
 
 
-def generate_accounts(token: str, flag: int) -> List[Account]:
+def generate_accounts(token: str, only_one_account: bool) -> List[Account]:
     
     account_one = fill_data_from_token(token)
 
-    if flag == 0:
+    if only_one_account == False:
         return [account_one]
 
-    elif flag == 1:        
+    else:       
         token_acc2 = token[::-1]
         account_two = fill_data_from_token(token_acc2)
 
@@ -112,4 +112,5 @@ def get_account_by_id(accounts: List[Account], id: str) -> Account:
 
     for account in accounts:
         if id == account.account_id:
-            return account
+            return account 
+    return None       

@@ -10,7 +10,7 @@ class BasicAuth(SecurityBase):
     def __init__(self, scheme_name: str = None):
         self.scheme_name = scheme_name
 
-    def __call__(self, request: Request) -> (str, int):
+    def __call__(self, request: Request) -> (str, bool):
         authorized: str = request.headers.get("Authorization")
         scheme, param = get_authorization_scheme_param(authorized)
 
@@ -21,31 +21,40 @@ class BasicAuth(SecurityBase):
                 headers={"WWW-Authenticate": "Basic"},
             )
 
-        decoded = base64.b64decode(param).decode("ascii")
-        username, _, password = decoded.partition(":")
-        flag = check_username_format(username)[1]
-
-        correct_username = secrets.compare_digest(
-            username, check_username_format(username)[0]
-        )
-        correct_password = secrets.compare_digest(password, "")
-
-        if not (correct_username and correct_password):
-            raise HTTPException(
-                status_code=401,
-                detail="Credentials not valid",
-                headers={"WWW-Authenticate": "Basic"},
-            )
-        token = "test_" + param
-        return (token, flag)
+        has_access, has_more_account = verify_user(param)
+        
+        token = "test_" + has_access
+        return (token, has_more_account)
 
 
-def check_username_format(username: str) -> (str, int):
+def check_username(username: str) -> {str, bool}:
     if username.startswith("user_multiple_"):
-        return (username, 1)
+        return {"name": username, "has_more_account": True}
 
     elif username.startswith("user_"):
-        return (username, 0)
+        return {"name": username, "has_more_account": False}
 
     else:
-        return ("_" + username, 0)
+        return {"name": "_"+username, "has_more_account": False}
+
+def verify_user(param: str) -> str:
+
+    decoded = base64.b64decode(param).decode("ascii")
+    username, _, password = decoded.partition(":")
+    has_more_account = check_username(username)["has_more_account"]
+    
+    correct_username = secrets.compare_digest(
+        username, check_username(username)["name"]
+    )
+    correct_password = secrets.compare_digest(password, "")
+
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=401,
+            detail="Credentials not valid",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    
+    return (param, has_more_account)
+
+
