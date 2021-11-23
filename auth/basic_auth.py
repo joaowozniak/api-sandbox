@@ -22,7 +22,7 @@ class BasicAuth(SecurityBase):
             )
 
         has_access, has_more_account = verify_user(param)
-        
+
         token = "test_" + has_access
         return (token, has_more_account)
 
@@ -35,14 +35,15 @@ def check_username(username: str) -> {str, bool}:
         return {"name": username, "has_more_account": False}
 
     else:
-        return {"name": "_"+username, "has_more_account": False}
+        return {"name": "_" + username, "has_more_account": False}
+
 
 def verify_user(param: str) -> str:
 
     decoded = base64.b64decode(param).decode("ascii")
     username, _, password = decoded.partition(":")
     has_more_account = check_username(username)["has_more_account"]
-    
+
     correct_username = secrets.compare_digest(
         username, check_username(username)["name"]
     )
@@ -54,7 +55,5 @@ def verify_user(param: str) -> str:
             detail="Credentials not valid",
             headers={"WWW-Authenticate": "Basic"},
         )
-    
+
     return (param, has_more_account)
-
-

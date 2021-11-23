@@ -6,19 +6,24 @@ from models.description import Description
 from models.counterparty import Counterparty
 from models.transaction_link import Transaction_Link
 
+
 def fill_links(account_id: str, transaction_id: str) -> Transaction_Link:
 
     base_link = "http://localhost:8000/accounts/"
 
     return Transaction_Link(
-        account=(base_link + account_id), 
-        self=(base_link + account_id + "/transactions/" + transaction_id)
+        account=(base_link + account_id),
+        self=(base_link + account_id + "/transactions/" + transaction_id),
     )
 
+
 def encode_with_alfanumeric(account_id: str, date: datetime.date) -> str:
-    encoded = str(hashlib.sha256((account_id + date.strftime("%Y/%m/%d")).encode()).hexdigest())[-22:]
-    
+    encoded = str(
+        hashlib.sha256((account_id + date.strftime("%Y/%m/%d")).encode()).hexdigest()
+    )[-22:]
+
     return encoded
+
 
 def generate_transactions(account: Account) -> List[Transaction]:
 
@@ -33,7 +38,7 @@ def generate_transactions(account: Account) -> List[Transaction]:
 
     for day in range((start_date - end_date).days + 1):
         date = start_date - day * day_delta
-        
+
         trans_id = encode_with_alfanumeric(account.account_id, date)
 
         merchants = get_all_merchants()
@@ -51,7 +56,7 @@ def generate_transactions(account: Account) -> List[Transaction]:
 
         trans_links = fill_links(account_id, trans_id)
 
-        trans_amount = generate_amount(trans_id)        
+        trans_amount = generate_amount(trans_id)
 
         trans = Transaction(
             account_id=account.account_id,
@@ -71,15 +76,16 @@ def generate_transactions(account: Account) -> List[Transaction]:
     return transactions
 
 
-def generate_amount(transaction_id: str) -> float:    
+def generate_amount(transaction_id: str) -> float:
     amounts = [i for i in range(1, 100)]
     amount = amounts[abs(hash(transaction_id[::-1])) % len(amounts)]
-    return amount*(-1.0)
+    return amount * (-1.0)
+
 
 def get_transaction_by_id(transactions: List[Transaction], id: str) -> Transaction:
     for trans in transactions:
         if id == trans.id:
-            return trans 
+            return trans
     return None
 
 

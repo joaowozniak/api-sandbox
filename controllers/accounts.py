@@ -20,27 +20,31 @@ def get_all_account_names():
     ]
     return names
 
+
 def encode_with_alfanumeric(token: str, type: str) -> str:
     if type == "enr":
         encoded = str(hashlib.sha256(token.encode()).hexdigest())[-22:]
-    
+
     elif type == "id":
         encoded = str(hashlib.md5(token.encode()).hexdigest())[-22:]
 
     return encoded
 
+
 def pseudo_random_from_token(token: str, type: str) -> str:
     if type == "inst" or type == "name":
-        prandom = (abs(hash(str(hashlib.md5(token.encode()).hexdigest()))))
+        prandom = abs(hash(str(hashlib.md5(token.encode()).hexdigest())))
 
     elif type == "acc_num":
         prandom = str(abs(hash(token)) % (10 ** 13))[-10:]
     return prandom
 
+
 def pseudo_random_starting_available(account_id: str) -> int:
     amounts = [i for i in range(10, 10000)]
     amount = amounts[abs(hash(account_id)) % len(amounts)]
     return amount
+
 
 def fill_links(account_id: str) -> Account_Link:
 
@@ -50,17 +54,20 @@ def fill_links(account_id: str) -> Account_Link:
         balances=(base_link + account_id + "/balances"),
         details=(base_link + account_id + "/details"),
         self=(base_link + account_id),
-        transactions=(base_link + account_id + "/transactions")
+        transactions=(base_link + account_id + "/transactions"),
     )
+
 
 def fill_data_from_token(token: str) -> Account:
 
     enrollment_id = "enr_" + encode_with_alfanumeric(token, "enr")
-    account_id = "acc_" + encode_with_alfanumeric(token, "id")  
-    
+    account_id = "acc_" + encode_with_alfanumeric(token, "id")
+
     institutions = get_all_institutions()
-    institution = institutions[pseudo_random_from_token(token, "inst") % len(institutions)]
-    
+    institution = institutions[
+        pseudo_random_from_token(token, "inst") % len(institutions)
+    ]
+
     acc_num = pseudo_random_from_token(token, "acc_num")
 
     last_four = acc_num[-4:]
@@ -90,18 +97,18 @@ def fill_data_from_token(token: str) -> Account:
         subtype="checking",
         type="depository",
         available=available_balance,
-        ledger=ledger_balance
+        ledger=ledger_balance,
     )
 
 
 def generate_accounts(token: str, only_one_account: bool) -> List[Account]:
-    
+
     account_one = fill_data_from_token(token)
 
     if only_one_account == False:
         return [account_one]
 
-    else:       
+    else:
         token_acc2 = token[::-1]
         account_two = fill_data_from_token(token_acc2)
 
@@ -112,5 +119,5 @@ def get_account_by_id(accounts: List[Account], id: str) -> Account:
 
     for account in accounts:
         if id == account.account_id:
-            return account 
-    return None       
+            return account
+    return None

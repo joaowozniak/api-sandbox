@@ -57,7 +57,8 @@ def get_accounts_by_id(
 
     accounts = generate_accounts(current_user[0], current_user[1])
     account_by_id = get_account_by_id(accounts, idx)
-    if account_by_id is None: return "Can't"
+    if account_by_id is None:
+        return "Can't"
     account_formatted = account_by_id.show_accounts_details()
     return account_formatted
 
@@ -68,7 +69,8 @@ def get_accounts_by_id(
 ):
     accounts = generate_accounts(current_user[0], current_user[1])
     account_by_id = get_account_by_id(accounts, idx)
-    if account_by_id is None: return "Can't"
+    if account_by_id is None:
+        return "Can't"
     account_formatted = account_by_id.show_accounts_balances()
     return account_formatted
 
@@ -79,21 +81,26 @@ def get_accounts_by_id(
 ):
     accounts = generate_accounts(current_user[0], current_user[1])
     account_by_id = get_account_by_id(accounts, idx)
-    if account_by_id is None: return "Can't"
+    if account_by_id is None:
+        return "Can't"
     transactions = generate_transactions(account_by_id)
     return transactions
 
 
 @sandbox.get("/accounts/{idx}/transactions/{idt}")
 def get_accounts_by_id(
-    current_user: (str, int) = Depends(get_current_user), idx: str = None, idt: str = None 
+    current_user: (str, int) = Depends(get_current_user),
+    idx: str = None,
+    idt: str = None,
 ):
     accounts = generate_accounts(current_user[0], current_user[1])
     account_by_id = get_account_by_id(accounts, idx)
-    if account_by_id is None: return "Can't"
+    if account_by_id is None:
+        return "Can't"
 
     transactions = generate_transactions(account_by_id)
     transaction_by_id = get_transaction_by_id(transactions, idt)
-    if transaction_by_id is None: return "Can't"
-    
+    if transaction_by_id is None:
+        return "Can't"
+
     return transaction_by_id

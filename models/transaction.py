@@ -10,7 +10,7 @@ class Transaction(BaseModel):
     account_id: str
     amount: float
     date: str
-    description: Description    
+    description: Description
     id: str
     links: Transaction_Link
     running_balance: float

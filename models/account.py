@@ -46,6 +46,5 @@ class Account(BaseModel):
             "account_id": self.account_id,
             "available": self.available,
             "ledger": self.ledger,
-            "links": self.links.show_balances()
+            "links": self.links.show_balances(),
         }
-
