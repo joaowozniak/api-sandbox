@@ -36,16 +36,18 @@ def generate_transactions(account: Account) -> List[Transaction]:
     account_amount = account.available
     account_id = account.account_id
 
-    for day in range((start_date - end_date).days + 1):
+    for day in range((start_date - end_date).days):
         date = start_date - day * day_delta
 
-        trans_id = encode_with_alfanumeric(account.account_id, date)
+        trans_key = encode_with_alfanumeric(account.account_id, date)
+        trans_id = "txn_" + trans_key
+        trans_id_num = int(hashlib.md5(trans_key.encode()).hexdigest(), 16)        
 
         merchants = get_all_merchants()
-        merchant = merchants[abs(hash(trans_id)) % len(merchants)]
+        merchant = merchants[trans_id_num % len(merchants)]
 
         categories = get_all_categories()
-        category = categories[abs(hash(trans_id)) % len(categories)]
+        category = categories[trans_id_num % len(categories)]
 
         description_counterparty = Counterparty(name=merchant, type="organization")
         trans_description = Description(
@@ -56,7 +58,7 @@ def generate_transactions(account: Account) -> List[Transaction]:
 
         trans_links = fill_links(account_id, trans_id)
 
-        trans_amount = generate_amount(trans_id)
+        trans_amount = generate_amount(trans_id_num)
 
         trans = Transaction(
             account_id=account.account_id,
@@ -78,7 +80,7 @@ def generate_transactions(account: Account) -> List[Transaction]:
 
 def generate_amount(transaction_id: str) -> float:
     amounts = [i for i in range(1, 100)]
-    amount = amounts[abs(hash(transaction_id[::-1])) % len(amounts)]
+    amount = amounts[transaction_id % len(amounts)]
     return amount * (-1.0)
 
 

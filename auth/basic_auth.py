@@ -21,9 +21,10 @@ class BasicAuth(SecurityBase):
                 headers={"WWW-Authenticate": "Basic"},
             )
 
-        has_access, has_more_account = verify_user(param)
+        _, has_more_account = verify_user(param)
 
-        token = "test_" + has_access
+        token = get_token(param)
+
         return {"token": token, "has_more_account": has_more_account}
 
 
@@ -63,3 +64,8 @@ def verify_user(param: str) -> (str, bool):
         )
 
     return (param, has_more_account)
+
+
+def get_token(param: str) -> (str):
+    token = "test_" + param
+    return token

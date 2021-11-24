@@ -23,26 +23,26 @@ def get_all_account_names():
 
 def encode_with_alfanumeric(token: str, type: str) -> str:
     if type == "enr":
-        encoded = str(hashlib.sha256(token.encode()).hexdigest())[-22:]
+        encoded = hashlib.sha256(token.encode()).hexdigest()[-22:]
 
     elif type == "id":
-        encoded = str(hashlib.md5(token.encode()).hexdigest())[-22:]
+        encoded = hashlib.md5(token.encode()).hexdigest()[-22:]
 
     return encoded
 
 
 def pseudo_random_from_token(token: str, type: str) -> str:
     if type == "inst" or type == "name":
-        prandom = abs(hash(str(hashlib.md5(token.encode()).hexdigest())))
+        prandom = int(hashlib.md5(token.encode()).hexdigest(), 16)
 
     elif type == "acc_num":
-        prandom = str(abs(hash(token)) % (10 ** 13))[-10:]
+        prandom = int(hashlib.sha256(token.encode()).hexdigest(), 16)
     return prandom
 
 
-def pseudo_random_starting_available(account_id: str) -> int:
+def pseudo_random_starting_available(key: str) -> int:
     amounts = [i for i in range(10, 10000)]
-    amount = amounts[abs(hash(account_id)) % len(amounts)]
+    amount = amounts[int(key, 16) % len(amounts)]
     return amount
 
 
@@ -68,7 +68,7 @@ def fill_data_from_token(token: str) -> Account:
         pseudo_random_from_token(token, "inst") % len(institutions)
     ]
 
-    acc_num = pseudo_random_from_token(token, "acc_num")
+    acc_num = str(pseudo_random_from_token(token, "acc_num"))[-10:]
 
     last_four = acc_num[-4:]
 
