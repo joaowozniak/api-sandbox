@@ -41,7 +41,7 @@ def generate_transactions(account: Account) -> List[Transaction]:
 
         trans_key = encode_with_alfanumeric(account.account_id, date)
         trans_id = "txn_" + trans_key
-        trans_id_num = int(hashlib.md5(trans_key.encode()).hexdigest(), 16)        
+        trans_id_num = int(hashlib.md5(trans_key.encode()).hexdigest(), 16)
 
         merchants = get_all_merchants()
         merchant = merchants[trans_id_num % len(merchants)]

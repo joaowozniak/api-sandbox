@@ -18,7 +18,7 @@ class BasicAuth(SecurityBase):
             raise HTTPException(
                 status_code=401,
                 detail="Not authorized",
-                headers={"WWW-Authenticate": "Basic"}
+                headers={"WWW-Authenticate": "Basic"},
             )
         _, has_more_account = verify_user(param)
 
@@ -45,7 +45,7 @@ def check_username(username: str) -> Dict[str, bool]:
 
 
 def verify_user(param: str) -> (str, bool):
- 
+
     decoded = base64.b64decode(param).decode("ascii")
     username, _, password = decoded.partition(":")
     has_more_account = check_username(username)["has_more_account"]
@@ -59,9 +59,9 @@ def verify_user(param: str) -> (str, bool):
         raise HTTPException(
             status_code=401,
             detail="Credentials not valid",
-            headers={"WWW-Authenticate": "Basic"}
+            headers={"WWW-Authenticate": "Basic"},
         )
-        
+
     return (param, has_more_account)
 
 

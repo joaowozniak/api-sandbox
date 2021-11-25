@@ -7,9 +7,10 @@ Sandbox that returns account and transaction data mimicking the same schema as t
 ## Install
 
 ```
-$ python3 -m venv .venv
-$ source .venv/bin/activate
-$ pip3 install -r requirements.txt
+$ python -m venv .venv
+$ cd .venv/Scripts
+$ . activate
+$ pip install -r requirements.txt
 ```
 
 ## Run

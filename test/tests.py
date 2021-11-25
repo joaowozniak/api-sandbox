@@ -1,6 +1,5 @@
-import base64, pytest, datetime
+import base64, datetime
 from fastapi.testclient import TestClient
-from fastapi import HTTPException
 from ..src.main import *
 from ..src.auth.basic_auth import *
 
@@ -47,9 +46,6 @@ def test_fail_login():
     response = client.get("/login", headers = {"Authorization": f"Basic {param}"})
     assert response.status_code == 401
     assert response.json() == {"detail":"Credentials not valid"}
-    #with pytest.raises(HTTPException) as error_info:
-    #    assert response.json() == {"detail":"Credentials not valid"}
-
 
 def test_check_username():
     '''
