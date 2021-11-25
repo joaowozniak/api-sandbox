@@ -1,7 +1,7 @@
 import base64, datetime
 from fastapi.testclient import TestClient
-from ..src.main import *
-from ..src.auth.basic_auth import *
+from src.main import *
+from src.auth.basic_auth import *
 
 client = TestClient(sandbox)
 
