@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from models.counterparty import Counterparty
+from ..models.counterparty import Counterparty
 
 
 class Description(BaseModel):

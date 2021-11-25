@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 from typing import List, Optional
-from models.institution import Institution
-from models.account_link import Account_Link
-from models.routing_number import Routing_Number
+from ..models.institution import Institution
+from ..models.account_link import Account_Link
+from ..models.routing_number import Routing_Number
 
 
 class Account(BaseModel):

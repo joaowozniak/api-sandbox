@@ -1,10 +1,10 @@
 import hashlib
 from typing import List, Optional
-from models.account import Account
-from models.account_link import Account_Link
-from models.institution import Institution
-from controllers.institutions import *
-from controllers.routing_numbers import *
+from ..models.account import Account
+from ..models.account_link import Account_Link
+from ..models.institution import Institution
+from ..controllers.institutions import *
+from ..controllers.routing_numbers import *
 
 
 def get_all_account_names():

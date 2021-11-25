@@ -1,5 +1,5 @@
 from typing import List
-from models.institution import Institution
+from ..models.institution import Institution
 
 
 def get_all_institutions() -> List[Institution]:

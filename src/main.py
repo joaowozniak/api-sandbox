@@ -6,10 +6,10 @@ from fastapi.openapi.models import Response
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 from typing import Optional, List, Dict
-from auth.basic_auth import BasicAuth
+from .auth.basic_auth import BasicAuth
 
-from controllers.accounts import generate_accounts, get_account_by_id
-from controllers.transactions import generate_transactions, get_transaction_by_id
+from .controllers.accounts import generate_accounts, get_account_by_id
+from .controllers.transactions import generate_transactions, get_transaction_by_id
 
 
 sandbox = FastAPI()
@@ -28,6 +28,11 @@ def get_current_user(
 @sandbox.get("/")
 def welcome():
     return "Hello. Log in with user_XXXXX where X is digit. user_multiple_XXXXX for user with multiple accounts. Password empty."
+
+
+@sandbox.get("/login")
+def welcome(current_user: Dict[str, bool] = Depends(get_current_user)):
+    return {"Log in": "OK"}
 
 
 @sandbox.get("/accounts")

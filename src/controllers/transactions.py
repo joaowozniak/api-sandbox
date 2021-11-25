@@ -1,10 +1,10 @@
 import hashlib, datetime
 from typing import List, Optional
-from models.account import Account
-from models.transaction import Transaction
-from models.description import Description
-from models.counterparty import Counterparty
-from models.transaction_link import Transaction_Link
+from ..models.account import Account
+from ..models.transaction import Transaction
+from ..models.description import Description
+from ..models.counterparty import Counterparty
+from ..models.transaction_link import Transaction_Link
 
 
 def fill_links(account_id: str, transaction_id: str) -> Transaction_Link:
