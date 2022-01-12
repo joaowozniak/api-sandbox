@@ -1,4 +1,4 @@
-# Teller Sandbox
+# API Sandbox
 
 ## Introduction
 
